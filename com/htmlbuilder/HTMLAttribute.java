@@ -24,8 +24,11 @@ public class HTMLAttribute {
 	public String getAttributeValue() {
 		return attributeValue;
 	}
-
-	public void setAttributeValue(String attributeValue) {
-		this.attributeValue = attributeValue;
+	
+	public void appendToStringBuilder(StringBuilder stringBuilder) {
+		stringBuilder.append(" ").append(attributeName);
+		if(attributeValue != null) {
+			stringBuilder.append("=\"").append(attributeValue).append("\"");
+		}
 	}
 }

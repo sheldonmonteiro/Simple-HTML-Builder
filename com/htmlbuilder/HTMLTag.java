@@ -5,8 +5,10 @@ import java.util.ArrayList;
 public class HTMLTag {
 	private String tagName;
 	private ArrayList<HTMLAttribute> attributes = new ArrayList<HTMLAttribute>();
-	private String innerHTML;
+	private String innerHTML = "";
 	private ArrayList<HTMLTag> childTags = new ArrayList<HTMLTag>();
+	private StringBuilder stringBuilder;
+	private int indentLevel;
 	
 	public HTMLTag(String name) {
 		this.tagName = name;
@@ -34,51 +36,85 @@ public class HTMLTag {
 		childTags.add(tag);
 	}
 	
-	public void setChildTags(ArrayList<HTMLTag> tag) {
-		this.childTags = tag;
-	}
-	
 	public void addAttribute(HTMLAttribute attribute) {
 		attributes.add(attribute);
 	}
-	
+
+	public String getTagName() {
+		return tagName;
+	}
+
+	public void setTagName(String tagName) {
+		this.tagName = tagName;
+	}
+
+	public ArrayList<HTMLAttribute> getAttributes() {
+		return attributes;
+	}
+
 	public void setAttributes(ArrayList<HTMLAttribute> attributes) {
 		this.attributes = attributes;
 	}
-	
-	public String toString() {
-		StringBuilder stringBuilder = new StringBuilder();
-		
-		stringBuilder = addOpeningTag(stringBuilder);
-		stringBuilder.append(innerHTML);
-		stringBuilder = addChildTags(stringBuilder);
-		stringBuilder.append("</").append(tagName).append(">");
-		return stringBuilder.toString();
+
+	public String getInnerHTML() {
+		return innerHTML;
+	}
+
+	public void setInnerHTML(String innerHTML) {
+		this.innerHTML = innerHTML;
+	}
+
+	public ArrayList<HTMLTag> getChildTags() {
+		return childTags;
+	}
+
+	public void setChildTags(ArrayList<HTMLTag> childTags) {
+		this.childTags = childTags;
+	}
+
+	public void appendToStringBuilder(StringBuilder stringBuilder, int indentLevel) {
+		this.stringBuilder = stringBuilder;
+		this.indentLevel = indentLevel;
+		appendOpeningTag();
+		appendInnerHTML();
+		appendChildTags();
+		appendClosingTag();
 	}
 	
-	private StringBuilder addOpeningTag(StringBuilder stringBuilder) {
+	private void appendOpeningTag() {
+		appendIndent();
 		stringBuilder.append("<").append(tagName);
-		stringBuilder = addAttributes(stringBuilder);
-		stringBuilder.append(">");
-		
-		return stringBuilder;
+		appendAttributes();
+		stringBuilder.append(">\r\n");
 	}
 	
-	private StringBuilder addAttributes(StringBuilder stringBuilder) {
+	private void appendAttributes() {
 		for(HTMLAttribute attribute : attributes) {
-			stringBuilder.append(" ").append(attribute.getAttributeName());
-			if(attribute.getAttributeValue() != null) {
-				stringBuilder.append("=\"").append(attribute.getAttributeValue()).append("\"");
-			}
+			attribute.appendToStringBuilder(stringBuilder);
 		}
-		
-		return stringBuilder;
 	}
 	
-	private StringBuilder addChildTags(StringBuilder stringBuilder) {
-		for(HTMLTag tag : childTags) {
-			stringBuilder.append(tag.toString());
+	private void appendInnerHTML() {
+		if(!innerHTML.equals("")) {
+			appendIndent();
+			stringBuilder.append("   ").append(innerHTML).append("\r\n");
 		}
-		return stringBuilder;
+	}
+	
+	private void appendClosingTag() {
+		appendIndent();
+		stringBuilder.append("</").append(tagName).append(">\r\n");
+	}
+	
+	private void appendChildTags() {
+		for(HTMLTag tag : childTags) {
+			tag.appendToStringBuilder(stringBuilder, indentLevel + 1);
+		}
+	}
+	
+	private void appendIndent() {
+		for(int x = 0; x<indentLevel; x++) {
+			stringBuilder.append("   ");
+		}
 	}
 }

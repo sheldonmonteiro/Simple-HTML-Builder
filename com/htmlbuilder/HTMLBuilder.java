@@ -7,7 +7,6 @@ public class HTMLBuilder {
 	private ArrayList<HTMLTag> tags = new ArrayList<HTMLTag>();
 	
 	public HTMLBuilder() {
-		
 	}
 	
 	public void add(HTMLTag tag) {
@@ -16,8 +15,9 @@ public class HTMLBuilder {
 	
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
+		int indentLevel = 0;
 		for(HTMLTag tag : tags) {
-			stringBuilder.append(tag.toString());
+			tag.appendToStringBuilder(stringBuilder, indentLevel);
 		}
 		
 		return stringBuilder.toString();
